@@ -181,20 +181,23 @@ report/
 
 ### Phase 3：RoboTwin 三任务数据生成
 
-- [ ] 为 `grab_roller` 生成 100 条 `demo_clean` 数据。
-- [ ] 为 `adjust_bottle` 生成 100 条 `demo_clean` 数据。
-- [ ] 为 `place_burger_fries` 生成 100 条 `demo_clean` 数据。
+- [x] 生成 Phase 3 串行前台执行脚本：`scripts/robotwin/phase3_generate_data.sh`。
+- [ ] 为 `grab_roller` 生成 100 条 `demo_clean_100` clean-domain 数据。
+- [ ] 为 `adjust_bottle` 生成 100 条 `demo_clean_100` clean-domain 数据。
+- [ ] 为 `place_burger_fries` 生成 100 条 `demo_clean_100` clean-domain 数据。
 - [ ] 统计每个任务的数据量、视频、HDF5、instruction、seed、scene_info。
 - [ ] 若单任务生成失败率过高，记录失败原因并调整任务或样本数。
 
 验收：
 
+- [x] 一条前台命令封装三任务串行数据生成：`pixi run robotwin-phase3-generate`。
 - [ ] 三个任务各有完整数据目录。
 - [ ] 每个任务都有至少一个 expert demonstration 视频可用于说明数据生成流程。
 - [ ] 数据目录结构和命令写入报告草稿。
 
 ### Phase 4：RoboTwin DP 训练
 
+- [x] 生成 Phase 4 串行前台执行脚本：`scripts/robotwin/phase4_train_dp.sh`。
 - [ ] 对 `grab_roller` 进行 DP 预处理与训练。
 - [ ] 对 `adjust_bottle` 进行 DP 预处理与训练。
 - [ ] 对 `place_burger_fries` 进行 DP 预处理与训练。
@@ -203,12 +206,14 @@ report/
 
 验收：
 
+- [x] 一条前台命令封装三任务 DP 预处理与训练：`pixi run robotwin-phase4-train`。
 - [ ] 三个任务都有训练日志和 checkpoint。
 - [ ] 每个任务至少保存一个可用于 eval 的 checkpoint。
 - [ ] 报告可复现命令完整。
 
 ### Phase 5：官方评测与自定义单次 rollout
 
+- [x] 生成 Phase 5 串行前台执行脚本：`scripts/robotwin/phase5_eval_rollout.sh`。
 - [ ] 使用官方 DP eval 脚本评估 `grab_roller`。
 - [ ] 使用官方 DP eval 脚本评估 `adjust_bottle`。
 - [ ] 使用官方 DP eval 脚本评估 `place_burger_fries`。
@@ -219,6 +224,7 @@ report/
 
 验收：
 
+- [x] 一条前台命令封装三任务官方评测与展示 rollout：`pixi run robotwin-phase5-eval`。
 - [ ] 官方评测结果存在并可被报告引用。
 - [ ] 自定义单次 rollout 展示脚本可重跑。
 - [ ] 三个任务各有一个展示级视频或在线播放入口。

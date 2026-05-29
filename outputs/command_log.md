@@ -175,3 +175,64 @@ Execution policy:
 
 - Phase 2 smoke runs are lightweight enough for agent-side background execution.
 - Phase 3-5 full data generation, training, and eval runs should be packaged as one-click serial scripts and executed by the user in the foreground.
+
+## 2026-05-29 Phase 3-5 Foreground Scripts
+
+The three heavy stages are packaged as foreground serial scripts. The agent should not launch these commands automatically; the user runs them and reports the result afterward.
+
+Default full-task configuration:
+
+```bash
+configs/robotwin/demo_clean_100.yml
+```
+
+The config keeps RoboTwin `demo_clean` domain settings and raises `episode_num` to 100.
+
+Phase 3 data generation:
+
+```bash
+pixi run robotwin-phase3-generate
+```
+
+Phase 4 DP preprocessing and training:
+
+```bash
+pixi run robotwin-phase4-train
+```
+
+Phase 5 official eval and custom rollout export:
+
+```bash
+pixi run robotwin-phase5-eval
+```
+
+Useful overrides:
+
+```bash
+TASKS="grab_roller adjust_bottle place_burger_fries" \
+TASK_CONFIG=demo_clean_100 \
+EXPERT_DATA_NUM=100 \
+GPU_ID=0 \
+pixi run robotwin-phase3-generate
+
+TASK_CONFIG=demo_clean_100 \
+EXPERT_DATA_NUM=100 \
+TRAIN_EPOCHS=600 \
+CHECKPOINT_EVERY=300 \
+BATCH_SIZE=128 \
+pixi run robotwin-phase4-train
+
+TASK_CONFIG=demo_clean_100 \
+CKPT_SETTING=demo_clean_100 \
+EXPERT_DATA_NUM=100 \
+CHECKPOINT_NUM=600 \
+pixi run robotwin-phase5-eval
+```
+
+Expected key outputs:
+
+- Data: `../RoboTwin-Project/RoboTwin/data/<task>/demo_clean_100/`
+- Zarr: `../RoboTwin-Project/RoboTwin/policy/DP/data/<task>-demo_clean_100-100.zarr`
+- Checkpoint: `../RoboTwin-Project/RoboTwin/policy/DP/checkpoints/<task>-demo_clean_100-100-0/600.ckpt`
+- Official eval: `../RoboTwin-Project/RoboTwin/eval_result/<task>/DP/demo_clean_100/demo_clean_100/<timestamp>/`
+- Custom rollout viewer: `outputs/robotwin/single_rollouts/<task>/.../viewer.html`

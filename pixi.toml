@@ -28,6 +28,9 @@ robotwin-dp-smoke-train = "python scripts/robotwin/run_dp_smoke.py train-debug"
 robotwin-dp-smoke-eval-start = "python scripts/robotwin/run_dp_smoke.py eval-start"
 robotwin-dp-smoke-rollout = "python scripts/robotwin/run_dp_smoke.py single-rollout"
 robotwin-dp-smoke-all-light = "python scripts/robotwin/run_dp_smoke.py all-light"
+robotwin-phase3-generate = "bash scripts/robotwin/phase3_generate_data.sh"
+robotwin-phase4-train = "bash scripts/robotwin/phase4_train_dp.sh"
+robotwin-phase5-eval = "bash scripts/robotwin/phase5_eval_rollout.sh"
 
 [dependencies]
 python = "3.10.*"
