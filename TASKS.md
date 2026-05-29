@@ -198,20 +198,21 @@ report/
 ### Phase 4：RoboTwin DP 训练
 
 - [x] 生成 Phase 4 串行前台执行脚本：`scripts/robotwin/phase4_train_dp.sh`。
-- [ ] 对 `grab_roller` 进行 DP 预处理与训练。
-- [ ] 对 `adjust_bottle` 进行 DP 预处理与训练。
-- [ ] 对 `place_burger_fries` 进行 DP 预处理与训练。
-- [ ] 记录训练命令、训练时长、显存占用、loss 曲线和 checkpoint 路径。
-- [ ] 如果默认 batch size/epochs 不适合本机，进行保守调参并记录原因。
+- [x] 对 `grab_roller` 进行 DP 预处理与训练。
+- [x] 对 `adjust_bottle` 进行 DP 预处理与训练。
+- [x] 对 `place_burger_fries` 进行 DP 预处理与训练。
+- [x] 记录训练命令、训练时长、loss 曲线和 checkpoint 路径：`outputs/robotwin/summary/phase4_training_summary.md`。
+- [ ] 如报告需要精确显存峰值，后续需要额外用 `nvidia-smi` 采样；当前 Phase4 只证明 `BATCH_SIZE=32` 可在 12GB GPU 上完成训练。
+- [x] 如果默认 batch size/epochs 不适合本机，进行保守调参并记录原因。
 - [x] 首次 Phase4 训练因 `BATCH_SIZE=128` 在 12GB GPU 上 OOM；已将默认训练配置改为 low-memory profile 并记录原因。
 - [x] 用户验证 `BATCH_SIZE=32` 可在 `grab_roller` 训练到 epoch 171 且 loss 约 `0.0166`；默认训练轮数改为 `TRAIN_EPOCHS=200`，最终 checkpoint 改为 `200.ckpt`。
 
 验收：
 
 - [x] 一条前台命令封装三任务 DP 预处理与训练：`pixi run robotwin-phase4-train`。
-- [ ] 三个任务都有训练日志和 checkpoint。
-- [ ] 每个任务至少保存一个可用于 eval 的 checkpoint。
-- [ ] 报告可复现命令完整。
+- [x] 三个任务都有训练日志和 checkpoint。
+- [x] 每个任务至少保存一个可用于 eval 的 checkpoint。
+- [x] 报告可复现命令完整。
 
 ### Phase 5：官方评测与自定义单次 rollout
 

@@ -331,3 +331,45 @@ pixi run robotwin-phase4-train
 
 - Phase 5 now defaults to `CHECKPOINT_NUM=200`, so `pixi run robotwin-phase5-eval` targets the expected final checkpoint without extra overrides.
 - If `BATCH_SIZE=32` OOMs on a later run, retry `BATCH_SIZE=16 pixi run robotwin-phase4-train`; if needed, retry `BATCH_SIZE=8 pixi run robotwin-phase4-train`.
+
+## 2026-05-29 Phase 4 Training Result
+
+User foreground command completed:
+
+```bash
+pixi run robotwin-phase4-train
+```
+
+Log directory:
+
+```text
+outputs/robotwin/logs/phase4_20260529-144921
+```
+
+Completed checkpoints:
+
+```text
+outputs/robotwin/artifacts/checkpoints/grab_roller-demo_clean_100-100-0/200.ckpt
+outputs/robotwin/artifacts/checkpoints/adjust_bottle-demo_clean_100-100-0/200.ckpt
+outputs/robotwin/artifacts/checkpoints/place_burger_fries-demo_clean_100-100-0/200.ckpt
+```
+
+Final structured log records:
+
+| Task | Final train loss | Final val loss |
+| --- | ---: | ---: |
+| `grab_roller` | 0.00899 | 0.00857 |
+| `adjust_bottle` | 0.01005 | 0.01016 |
+| `place_burger_fries` | 0.01116 | 0.00976 |
+
+Summary:
+
+```text
+outputs/robotwin/summary/phase4_training_summary.md
+```
+
+Phase 4 is complete. The next foreground command is:
+
+```bash
+pixi run robotwin-phase5-eval
+```
