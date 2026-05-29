@@ -27,10 +27,12 @@ outputs/**/*.pt
 outputs/**/*.pth
 outputs/**/checkpoint*/
 outputs/**/checkpoints/
+outputs/robotwin/artifacts/
+outputs/robotwin/logs/
 outputs/sapien_smoke/
 outputs/sapien_live_smoke/
 
-# RoboTwin and training data are stored outside this course repo.
+# Avoid accidentally committing external RoboTwin copies or top-level artifacts.
 RoboTwin/
 data/
 eval_result/

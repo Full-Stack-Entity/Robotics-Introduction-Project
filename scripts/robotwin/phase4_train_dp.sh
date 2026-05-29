@@ -14,6 +14,7 @@ Environment overrides:
   EXPERT_DATA_NUM=100
   SEED=0
   GPU_ID=0
+  ROBOTWIN_ARTIFACT_ROOT=outputs/robotwin/artifacts
   TRAIN_EPOCHS=600
   CHECKPOINT_EVERY=300
   BATCH_SIZE=128
@@ -34,6 +35,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 ROBOTWIN_ROOT="${ROBOTWIN_ROOT:-${PROJECT_ROOT}/../RoboTwin-Project/RoboTwin}"
+ROBOTWIN_ARTIFACT_ROOT="${ROBOTWIN_ARTIFACT_ROOT:-${PROJECT_ROOT}/outputs/robotwin/artifacts}"
 TASKS="${TASKS:-grab_roller adjust_bottle place_burger_fries}"
 TASK_CONFIG="${TASK_CONFIG:-demo_clean_100}"
 EXPERT_DATA_NUM="${EXPERT_DATA_NUM:-100}"
@@ -46,6 +48,7 @@ NUM_INFERENCE_STEPS="${NUM_INFERENCE_STEPS:-100}"
 NOISE_TIMESTEPS="${NOISE_TIMESTEPS:-100}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_ROOT="${LOG_ROOT:-${PROJECT_ROOT}/outputs/robotwin/logs/phase4_${STAMP}}"
+export ROBOTWIN_ROOT ROBOTWIN_ARTIFACT_ROOT
 
 require_file() {
   local path="$1"
@@ -82,12 +85,20 @@ if (( TRAIN_EPOCHS % CHECKPOINT_EVERY != 0 )); then
   exit 2
 fi
 mkdir -p "${LOG_ROOT}"
+read -r -a TASK_LIST <<< "${TASKS}"
+python "${PROJECT_ROOT}/scripts/robotwin/prepare_artifact_links.py" \
+  --tasks "${TASK_LIST[@]}" \
+  --task-configs "${TASK_CONFIG}" \
+  --link-data \
+  --link-dp-data \
+  --link-checkpoints
 
 {
   echo "phase: 4"
   echo "timestamp: ${STAMP}"
   echo "project_root: ${PROJECT_ROOT}"
   echo "robotwin_root: ${ROBOTWIN_ROOT}"
+  echo "artifact_root: ${ROBOTWIN_ARTIFACT_ROOT}"
   echo "task_config: ${TASK_CONFIG}"
   echo "expert_data_num: ${EXPERT_DATA_NUM}"
   echo "seed: ${SEED}"
@@ -98,11 +109,10 @@ mkdir -p "${LOG_ROOT}"
   echo "tasks: ${TASKS}"
 } | tee "${LOG_ROOT}/run_env.txt"
 
-read -r -a TASK_LIST <<< "${TASKS}"
 for task_name in "${TASK_LIST[@]}"; do
   echo
   echo "========== Phase 4 DP preprocessing: ${task_name} =========="
-  data_dir="${ROBOTWIN_ROOT}/data/${task_name}/${TASK_CONFIG}/data"
+  data_dir="${ROBOTWIN_ARTIFACT_ROOT}/data/${task_name}/${TASK_CONFIG}/data"
   require_dir "${data_dir}"
   hdf5_count="$(find "${data_dir}" -maxdepth 1 -name 'episode*.hdf5' | wc -l)"
   if [[ "${hdf5_count}" -lt "${EXPERT_DATA_NUM}" ]]; then
@@ -116,7 +126,7 @@ for task_name in "${TASK_LIST[@]}"; do
     python process_data.py "${task_name}" "${TASK_CONFIG}" "${EXPERT_DATA_NUM}"
   ) 2>&1 | tee "${process_log}"
 
-  zarr_dir="${ROBOTWIN_ROOT}/policy/DP/data/${task_name}-${TASK_CONFIG}-${EXPERT_DATA_NUM}.zarr"
+  zarr_dir="${ROBOTWIN_ARTIFACT_ROOT}/dp_data/${task_name}-${TASK_CONFIG}-${EXPERT_DATA_NUM}.zarr"
   require_file "${zarr_dir}/.zgroup"
 
   echo
@@ -147,7 +157,7 @@ for task_name in "${TASK_LIST[@]}"; do
         "hydra.run.dir=data/outputs/${task_name}_dp_${TASK_CONFIG}_${EXPERT_DATA_NUM}_seed${SEED}"
   ) 2>&1 | tee "${train_log}"
 
-  ckpt_file="${ROBOTWIN_ROOT}/policy/DP/checkpoints/${task_name}-${TASK_CONFIG}-${EXPERT_DATA_NUM}-${SEED}/${TRAIN_EPOCHS}.ckpt"
+  ckpt_file="${ROBOTWIN_ARTIFACT_ROOT}/checkpoints/${task_name}-${TASK_CONFIG}-${EXPERT_DATA_NUM}-${SEED}/${TRAIN_EPOCHS}.ckpt"
   require_file "${ckpt_file}"
   echo "[ok] ${task_name}: checkpoint ${ckpt_file}"
 done

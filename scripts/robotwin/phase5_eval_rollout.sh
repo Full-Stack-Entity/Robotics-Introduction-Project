@@ -18,6 +18,7 @@ Environment overrides:
   GPU_ID=0
   INSTRUCTION_TYPE=unseen
   ROBOTWIN_ROOT=../RoboTwin-Project/RoboTwin
+  ROBOTWIN_ARTIFACT_ROOT=outputs/robotwin/artifacts
   LOG_ROOT=outputs/robotwin/logs/phase5_<timestamp>
 
 Official eval is the quantitative result. The custom rollout viewer is only for
@@ -33,6 +34,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 ROBOTWIN_ROOT="${ROBOTWIN_ROOT:-${PROJECT_ROOT}/../RoboTwin-Project/RoboTwin}"
+ROBOTWIN_ARTIFACT_ROOT="${ROBOTWIN_ARTIFACT_ROOT:-${PROJECT_ROOT}/outputs/robotwin/artifacts}"
 TASKS="${TASKS:-grab_roller adjust_bottle place_burger_fries}"
 TASK_CONFIG="${TASK_CONFIG:-demo_clean_100}"
 CKPT_SETTING="${CKPT_SETTING:-${TASK_CONFIG}}"
@@ -44,6 +46,7 @@ INSTRUCTION_TYPE="${INSTRUCTION_TYPE:-unseen}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_ROOT="${LOG_ROOT:-${PROJECT_ROOT}/outputs/robotwin/logs/phase5_${STAMP}}"
 ROLLOUT_ROOT="${ROLLOUT_ROOT:-${PROJECT_ROOT}/outputs/robotwin/single_rollouts}"
+export ROBOTWIN_ROOT ROBOTWIN_ARTIFACT_ROOT
 
 require_file() {
   local path="$1"
@@ -76,12 +79,21 @@ require_file "${ROBOTWIN_ROOT}/script/eval_policy.py"
 require_file "${PROJECT_ROOT}/scripts/robotwin/single_rollout_demo.py"
 copy_project_config_if_present
 mkdir -p "${LOG_ROOT}" "${ROLLOUT_ROOT}"
+read -r -a TASK_LIST <<< "${TASKS}"
+python "${PROJECT_ROOT}/scripts/robotwin/prepare_artifact_links.py" \
+  --tasks "${TASK_LIST[@]}" \
+  --task-configs "${TASK_CONFIG}" \
+  --link-data \
+  --link-dp-data \
+  --link-checkpoints \
+  --link-eval
 
 {
   echo "phase: 5"
   echo "timestamp: ${STAMP}"
   echo "project_root: ${PROJECT_ROOT}"
   echo "robotwin_root: ${ROBOTWIN_ROOT}"
+  echo "artifact_root: ${ROBOTWIN_ARTIFACT_ROOT}"
   echo "task_config: ${TASK_CONFIG}"
   echo "ckpt_setting: ${CKPT_SETTING}"
   echo "expert_data_num: ${EXPERT_DATA_NUM}"
@@ -92,9 +104,8 @@ mkdir -p "${LOG_ROOT}" "${ROLLOUT_ROOT}"
   echo "tasks: ${TASKS}"
 } | tee "${LOG_ROOT}/run_env.txt"
 
-read -r -a TASK_LIST <<< "${TASKS}"
 for task_name in "${TASK_LIST[@]}"; do
-  ckpt_file="${ROBOTWIN_ROOT}/policy/DP/checkpoints/${task_name}-${CKPT_SETTING}-${EXPERT_DATA_NUM}-${SEED}/${CHECKPOINT_NUM}.ckpt"
+  ckpt_file="${ROBOTWIN_ARTIFACT_ROOT}/checkpoints/${task_name}-${CKPT_SETTING}-${EXPERT_DATA_NUM}-${SEED}/${CHECKPOINT_NUM}.ckpt"
   require_file "${ckpt_file}"
 
   echo

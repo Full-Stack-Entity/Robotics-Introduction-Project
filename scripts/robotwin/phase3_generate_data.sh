@@ -14,6 +14,7 @@ Environment overrides:
   EXPERT_DATA_NUM=100
   GPU_ID=0
   ROBOTWIN_ROOT=../RoboTwin-Project/RoboTwin
+  ROBOTWIN_ARTIFACT_ROOT=outputs/robotwin/artifacts
   LOG_ROOT=outputs/robotwin/logs/phase3_<timestamp>
 
 This is a heavy foreground command. It generates data serially and should be
@@ -29,12 +30,14 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 ROBOTWIN_ROOT="${ROBOTWIN_ROOT:-${PROJECT_ROOT}/../RoboTwin-Project/RoboTwin}"
+ROBOTWIN_ARTIFACT_ROOT="${ROBOTWIN_ARTIFACT_ROOT:-${PROJECT_ROOT}/outputs/robotwin/artifacts}"
 TASKS="${TASKS:-grab_roller adjust_bottle place_burger_fries}"
 TASK_CONFIG="${TASK_CONFIG:-demo_clean_100}"
 EXPERT_DATA_NUM="${EXPERT_DATA_NUM:-100}"
 GPU_ID="${GPU_ID:-0}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_ROOT="${LOG_ROOT:-${PROJECT_ROOT}/outputs/robotwin/logs/phase3_${STAMP}}"
+export ROBOTWIN_ROOT ROBOTWIN_ARTIFACT_ROOT
 
 require_file() {
   local path="$1"
@@ -81,19 +84,24 @@ require_dir "${ROBOTWIN_ROOT}"
 require_file "${ROBOTWIN_ROOT}/collect_data.sh"
 prepare_config
 mkdir -p "${LOG_ROOT}"
+read -r -a TASK_LIST <<< "${TASKS}"
+python "${PROJECT_ROOT}/scripts/robotwin/prepare_artifact_links.py" \
+  --tasks "${TASK_LIST[@]}" \
+  --task-configs "${TASK_CONFIG}" \
+  --link-data
 
 {
   echo "phase: 3"
   echo "timestamp: ${STAMP}"
   echo "project_root: ${PROJECT_ROOT}"
   echo "robotwin_root: ${ROBOTWIN_ROOT}"
+  echo "artifact_root: ${ROBOTWIN_ARTIFACT_ROOT}"
   echo "task_config: ${TASK_CONFIG}"
   echo "expert_data_num: ${EXPERT_DATA_NUM}"
   echo "gpu_id: ${GPU_ID}"
   echo "tasks: ${TASKS}"
 } | tee "${LOG_ROOT}/run_env.txt"
 
-read -r -a TASK_LIST <<< "${TASKS}"
 for task_name in "${TASK_LIST[@]}"; do
   echo
   echo "========== Phase 3 data generation: ${task_name} =========="
@@ -103,7 +111,7 @@ for task_name in "${TASK_LIST[@]}"; do
     CUDA_VISIBLE_DEVICES="${GPU_ID}" bash collect_data.sh "${task_name}" "${TASK_CONFIG}" "${GPU_ID}"
   ) 2>&1 | tee "${task_log}"
 
-  data_dir="${ROBOTWIN_ROOT}/data/${task_name}/${TASK_CONFIG}/data"
+  data_dir="${ROBOTWIN_ARTIFACT_ROOT}/data/${task_name}/${TASK_CONFIG}/data"
   require_dir "${data_dir}"
   hdf5_count="$(find "${data_dir}" -maxdepth 1 -name 'episode*.hdf5' | wc -l)"
   if [[ "${hdf5_count}" -lt "${EXPERT_DATA_NUM}" ]]; then

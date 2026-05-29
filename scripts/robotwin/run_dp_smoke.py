@@ -6,6 +6,7 @@ import subprocess
 from common import (
     PROJECT_ROOT,
     ensure_task_config,
+    ensure_robotwin_artifact_links,
     latest_directory,
     python_executable,
     resolve_robotwin_root,
@@ -23,6 +24,12 @@ DEFAULT_CHECKPOINT = 2
 def collect_data(args: argparse.Namespace) -> None:
     robotwin_root = resolve_robotwin_root()
     ensure_task_config(args.task_config, robotwin_root)
+    ensure_robotwin_artifact_links(
+        robotwin_root=robotwin_root,
+        tasks=[args.task_name],
+        task_configs=[args.task_config],
+        link_data=True,
+    )
     run_command(
         ["bash", "collect_data.sh", args.task_name, args.task_config, str(args.gpu_id)],
         cwd=robotwin_root,
@@ -33,6 +40,13 @@ def collect_data(args: argparse.Namespace) -> None:
 def process_data(args: argparse.Namespace) -> None:
     robotwin_root = resolve_robotwin_root()
     ensure_task_config(args.task_config, robotwin_root)
+    ensure_robotwin_artifact_links(
+        robotwin_root=robotwin_root,
+        tasks=[args.task_name],
+        task_configs=[args.task_config],
+        link_data=True,
+        link_dp_data=True,
+    )
     run_command(
         [
             python_executable(),
@@ -48,6 +62,14 @@ def process_data(args: argparse.Namespace) -> None:
 def train_debug(args: argparse.Namespace) -> None:
     robotwin_root = resolve_robotwin_root()
     ensure_task_config(args.task_config, robotwin_root)
+    ensure_robotwin_artifact_links(
+        robotwin_root=robotwin_root,
+        tasks=[args.task_name],
+        task_configs=[args.task_config],
+        link_data=True,
+        link_dp_data=True,
+        link_checkpoints=True,
+    )
     output_dir = f"data/outputs/{args.task_name}_dp_smoke_seed{args.seed}"
     zarr_path = f"data/{args.task_name}-{args.task_config}-{args.expert_data_num}.zarr"
     cmd = [
@@ -78,6 +100,15 @@ def train_debug(args: argparse.Namespace) -> None:
 def eval_start(args: argparse.Namespace) -> None:
     robotwin_root = resolve_robotwin_root()
     ensure_task_config(args.task_config, robotwin_root)
+    ensure_robotwin_artifact_links(
+        robotwin_root=robotwin_root,
+        tasks=[args.task_name],
+        task_configs=[args.task_config],
+        link_data=True,
+        link_dp_data=True,
+        link_checkpoints=True,
+        link_eval=True,
+    )
     eval_root = (
         robotwin_root
         / "eval_result"
@@ -124,6 +155,14 @@ def eval_start(args: argparse.Namespace) -> None:
 def single_rollout(args: argparse.Namespace) -> None:
     robotwin_root = resolve_robotwin_root()
     ensure_task_config(args.task_config, robotwin_root)
+    ensure_robotwin_artifact_links(
+        robotwin_root=robotwin_root,
+        tasks=[args.task_name],
+        task_configs=[args.task_config],
+        link_data=True,
+        link_dp_data=True,
+        link_checkpoints=True,
+    )
     output_root = PROJECT_ROOT / "outputs" / "robotwin" / "single_rollouts"
     cmd = [
         python_executable(),

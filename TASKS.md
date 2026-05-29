@@ -167,10 +167,10 @@ report/
 ### Phase 2：RoboTwin DP smoke
 
 - [x] 基于 `grab_roller` 创建小规模 smoke 配置：`configs/robotwin/demo_clean_smoke.yml`。
-- [x] 生成 5 条 `demo_clean_smoke` 数据：`../RoboTwin-Project/RoboTwin/data/grab_roller/demo_clean_smoke`。
-- [x] 跑通 DP 数据预处理：`../RoboTwin-Project/RoboTwin/policy/DP/data/grab_roller-demo_clean_smoke-5.zarr`。
-- [x] 跑通 DP 训练启动：debug training 生成 `../RoboTwin-Project/RoboTwin/policy/DP/checkpoints/grab_roller-demo_clean_smoke-5-0/2.ckpt`。
-- [x] 跑通官方 eval 启动：90s timeout 前已写出 `../RoboTwin-Project/RoboTwin/eval_result/grab_roller/DP/demo_clean_smoke/demo_clean_smoke/2026-05-29 10:40:40/episode0.mp4`。
+- [x] 生成 5 条 `demo_clean_smoke` 数据：`outputs/robotwin/artifacts/data/grab_roller/demo_clean_smoke`。
+- [x] 跑通 DP 数据预处理：`outputs/robotwin/artifacts/dp_data/grab_roller-demo_clean_smoke-5.zarr`。
+- [x] 跑通 DP 训练启动：debug training 生成 `outputs/robotwin/artifacts/checkpoints/grab_roller-demo_clean_smoke-5-0/2.ckpt`。
+- [x] 跑通官方 eval 启动：90s timeout 前已写出 `outputs/robotwin/artifacts/eval_result/grab_roller/DP/demo_clean_smoke/demo_clean_smoke/2026-05-29 10:40:40/episode0.mp4`。
 - [x] 跑通自定义单次 rollout 展示脚本的最小版本：`pixi run robotwin-dp-smoke-rollout`。
 
 验收：
@@ -182,18 +182,18 @@ report/
 ### Phase 3：RoboTwin 三任务数据生成
 
 - [x] 生成 Phase 3 串行前台执行脚本：`scripts/robotwin/phase3_generate_data.sh`。
-- [ ] 为 `grab_roller` 生成 100 条 `demo_clean_100` clean-domain 数据。
-- [ ] 为 `adjust_bottle` 生成 100 条 `demo_clean_100` clean-domain 数据。
-- [ ] 为 `place_burger_fries` 生成 100 条 `demo_clean_100` clean-domain 数据。
-- [ ] 统计每个任务的数据量、视频、HDF5、instruction、seed、scene_info。
-- [ ] 若单任务生成失败率过高，记录失败原因并调整任务或样本数。
+- [x] 为 `grab_roller` 生成 100 条 `demo_clean_100` clean-domain 数据：`outputs/robotwin/artifacts/data/grab_roller/demo_clean_100`。
+- [x] 为 `adjust_bottle` 生成 100 条 `demo_clean_100` clean-domain 数据：`outputs/robotwin/artifacts/data/adjust_bottle/demo_clean_100`。
+- [x] 为 `place_burger_fries` 生成 100 条 `demo_clean_100` clean-domain 数据：`outputs/robotwin/artifacts/data/place_burger_fries/demo_clean_100`。
+- [x] 统计每个任务的数据量、视频、HDF5、instruction、seed、scene_info：`outputs/robotwin/summary/phase3_data_summary.md`。
+- [x] 记录 seed search 失败次数；三个任务均成功生成 100 条，不需要调整任务或样本数。
 
 验收：
 
 - [x] 一条前台命令封装三任务串行数据生成：`pixi run robotwin-phase3-generate`。
-- [ ] 三个任务各有完整数据目录。
-- [ ] 每个任务都有至少一个 expert demonstration 视频可用于说明数据生成流程。
-- [ ] 数据目录结构和命令写入报告草稿。
+- [x] 三个任务各有完整数据目录。
+- [x] 每个任务都有至少一个 expert demonstration 视频可用于说明数据生成流程。
+- [x] 数据目录结构和命令写入 `outputs/command_log.md` 与 Phase3 summary。
 
 ### Phase 4：RoboTwin DP 训练
 

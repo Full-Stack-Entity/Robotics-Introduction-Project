@@ -116,7 +116,7 @@ Observed result:
 - Task: `grab_roller`
 - Config: `demo_clean_smoke`
 - Expert seed collection: 5/5 successful.
-- Output data directory: `../RoboTwin-Project/RoboTwin/data/grab_roller/demo_clean_smoke`
+- Output data directory: `outputs/robotwin/artifacts/data/grab_roller/demo_clean_smoke`
 - Directory size: about `393M`.
 
 DP preprocessing:
@@ -127,7 +127,7 @@ pixi run robotwin-dp-smoke-process
 
 Observed zarr:
 
-- Path: `../RoboTwin-Project/RoboTwin/policy/DP/data/grab_roller-demo_clean_smoke-5.zarr`
+- Path: `outputs/robotwin/artifacts/dp_data/grab_roller-demo_clean_smoke-5.zarr`
 - `head_camera`: `(6289, 3, 240, 320)`
 - `state`: `(6289, 14)`
 - `action`: `(6289, 14)`
@@ -141,10 +141,10 @@ pixi run robotwin-dp-smoke-train
 
 Observed result:
 
-- Training log: `../RoboTwin-Project/RoboTwin/policy/DP/data/outputs/grab_roller_dp_smoke_seed0/logs.json.txt`
+- Training log: `outputs/robotwin/artifacts/dp_data/outputs/grab_roller_dp_smoke_seed0/logs.json.txt`
 - Checkpoints:
-  - `../RoboTwin-Project/RoboTwin/policy/DP/checkpoints/grab_roller-demo_clean_smoke-5-0/1.ckpt`
-  - `../RoboTwin-Project/RoboTwin/policy/DP/checkpoints/grab_roller-demo_clean_smoke-5-0/2.ckpt`
+  - `outputs/robotwin/artifacts/checkpoints/grab_roller-demo_clean_smoke-5-0/1.ckpt`
+  - `outputs/robotwin/artifacts/checkpoints/grab_roller-demo_clean_smoke-5-0/2.ckpt`
 - Debug training ran for 2 epochs with 3 train/val steps per epoch.
 
 Official eval startup check:
@@ -156,7 +156,7 @@ pixi run robotwin-dp-smoke-eval-start
 Observed result:
 
 - The default official eval path targets 100 test seeds, so the smoke command is timeout-protected.
-- A timeout-protected run created `../RoboTwin-Project/RoboTwin/eval_result/grab_roller/DP/demo_clean_smoke/demo_clean_smoke/2026-05-29 10:40:40/episode0.mp4` before timeout.
+- A timeout-protected run created `outputs/robotwin/artifacts/eval_result/grab_roller/DP/demo_clean_smoke/demo_clean_smoke/2026-05-29 10:40:40/episode0.mp4` before timeout.
 
 Custom single rollout:
 
@@ -187,6 +187,14 @@ configs/robotwin/demo_clean_100.yml
 ```
 
 The config keeps RoboTwin `demo_clean` domain settings and raises `episode_num` to 100.
+
+Heavy artifacts are stored inside this course project by default:
+
+```bash
+outputs/robotwin/artifacts/
+```
+
+The scripts create symlinks from RoboTwin's fixed runtime paths into this artifact root, so generated data, DP zarr files, checkpoints, and eval outputs do not live in the adjacent `RoboTwin-Project` folder.
 
 Phase 3 data generation:
 
@@ -231,8 +239,32 @@ pixi run robotwin-phase5-eval
 
 Expected key outputs:
 
-- Data: `../RoboTwin-Project/RoboTwin/data/<task>/demo_clean_100/`
-- Zarr: `../RoboTwin-Project/RoboTwin/policy/DP/data/<task>-demo_clean_100-100.zarr`
-- Checkpoint: `../RoboTwin-Project/RoboTwin/policy/DP/checkpoints/<task>-demo_clean_100-100-0/600.ckpt`
-- Official eval: `../RoboTwin-Project/RoboTwin/eval_result/<task>/DP/demo_clean_100/demo_clean_100/<timestamp>/`
+- Data: `outputs/robotwin/artifacts/data/<task>/demo_clean_100/`
+- Zarr: `outputs/robotwin/artifacts/dp_data/<task>-demo_clean_100-100.zarr`
+- Checkpoint: `outputs/robotwin/artifacts/checkpoints/<task>-demo_clean_100-100-0/600.ckpt`
+- Official eval: `outputs/robotwin/artifacts/eval_result/<task>/DP/demo_clean_100/demo_clean_100/<timestamp>/`
 - Custom rollout viewer: `outputs/robotwin/single_rollouts/<task>/.../viewer.html`
+
+## 2026-05-29 Phase 3 Data Generation Result
+
+User foreground command completed:
+
+```bash
+pixi run robotwin-phase3-generate
+```
+
+Log directory:
+
+```bash
+outputs/robotwin/logs/phase3_20260529-111119
+```
+
+After completion, the generated data was migrated into the course project artifact root and RoboTwin runtime paths were converted to symlinks.
+
+| Task | Data directory | HDF5 | Videos | Instructions | Seed count | Size | Seed search failures |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `grab_roller` | `outputs/robotwin/artifacts/data/grab_roller/demo_clean_100` | 100 | 100 | 100 | 100 | 577M | 4 / 104 tries |
+| `adjust_bottle` | `outputs/robotwin/artifacts/data/adjust_bottle/demo_clean_100` | 100 | 100 | 100 | 100 | 849M | 31 / 131 tries |
+| `place_burger_fries` | `outputs/robotwin/artifacts/data/place_burger_fries/demo_clean_100` | 100 | 100 | 100 | 100 | 1.9G | 3 / 103 tries |
+
+Each task directory also contains `seed.txt` and `scene_info.json`.
