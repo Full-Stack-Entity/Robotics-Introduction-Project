@@ -1,0 +1,48 @@
+.pixi/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.omx/
+
+# Local environment and secrets
+.env
+*.pem
+*.key
+credentials.json
+settings.json
+*_secret*
+*_token*
+
+# Large generated artifacts
+outputs/**/*.mp4
+outputs/**/*.avi
+outputs/**/*.mov
+outputs/**/*.mkv
+outputs/**/*.hdf5
+outputs/**/*.zarr/
+outputs/**/*.ckpt
+outputs/**/*.pt
+outputs/**/*.pth
+outputs/**/checkpoint*/
+outputs/**/checkpoints/
+
+# RoboTwin and training data are stored outside this course repo.
+RoboTwin/
+data/
+eval_result/
+act_ckpt/
+processed_data/
+
+# LaTeX generated files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.xdv
