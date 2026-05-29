@@ -1,0 +1,8 @@
+task_name: grab_roller
+policy_name: DP
+task_config: demo_clean_smoke
+ckpt_setting: demo_clean_smoke
+expert_data_num: 5
+seed: 0
+checkpoint_num: 2
+single_rollout_success: 0/1

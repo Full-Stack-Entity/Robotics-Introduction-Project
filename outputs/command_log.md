@@ -90,3 +90,88 @@ Observed result:
 - Trajectory CSV logs were written to `outputs/sapien/logs/`.
 - Trajectory plots were written to `outputs/sapien/plots/`.
 - Local HTML preview was written to `outputs/sapien/viewer.html`.
+
+## 2026-05-29 Phase 2 RoboTwin DP Smoke
+
+Working directory:
+
+```bash
+cd /home/robotics/桌面/Embodied-AI/Robotics-Introduction-Project
+```
+
+Smoke config:
+
+```bash
+configs/robotwin/demo_clean_smoke.yml
+```
+
+RoboTwin smoke data generation:
+
+```bash
+pixi run robotwin-dp-smoke-collect
+```
+
+Observed result:
+
+- Task: `grab_roller`
+- Config: `demo_clean_smoke`
+- Expert seed collection: 5/5 successful.
+- Output data directory: `../RoboTwin-Project/RoboTwin/data/grab_roller/demo_clean_smoke`
+- Directory size: about `393M`.
+
+DP preprocessing:
+
+```bash
+pixi run robotwin-dp-smoke-process
+```
+
+Observed zarr:
+
+- Path: `../RoboTwin-Project/RoboTwin/policy/DP/data/grab_roller-demo_clean_smoke-5.zarr`
+- `head_camera`: `(6289, 3, 240, 320)`
+- `state`: `(6289, 14)`
+- `action`: `(6289, 14)`
+- `episode_ends`: `[1260, 2508, 3718, 4989, 6289]`
+
+DP debug training:
+
+```bash
+pixi run robotwin-dp-smoke-train
+```
+
+Observed result:
+
+- Training log: `../RoboTwin-Project/RoboTwin/policy/DP/data/outputs/grab_roller_dp_smoke_seed0/logs.json.txt`
+- Checkpoints:
+  - `../RoboTwin-Project/RoboTwin/policy/DP/checkpoints/grab_roller-demo_clean_smoke-5-0/1.ckpt`
+  - `../RoboTwin-Project/RoboTwin/policy/DP/checkpoints/grab_roller-demo_clean_smoke-5-0/2.ckpt`
+- Debug training ran for 2 epochs with 3 train/val steps per epoch.
+
+Official eval startup check:
+
+```bash
+pixi run robotwin-dp-smoke-eval-start
+```
+
+Observed result:
+
+- The default official eval path targets 100 test seeds, so the smoke command is timeout-protected.
+- A timeout-protected run created `../RoboTwin-Project/RoboTwin/eval_result/grab_roller/DP/demo_clean_smoke/demo_clean_smoke/2026-05-29 10:40:40/episode0.mp4` before timeout.
+
+Custom single rollout:
+
+```bash
+pixi run robotwin-dp-smoke-rollout
+```
+
+Observed result:
+
+- Output viewer: `outputs/robotwin/single_rollouts/grab_roller/demo_clean_smoke_seed0_ckpt2_20260529-104835/viewer.html`
+- Output video: `outputs/robotwin/single_rollouts/grab_roller/demo_clean_smoke_seed0_ckpt2_20260529-104835/episode0.mp4`
+- Video metadata: `320x240`, `400` frames, `40.0s`.
+- Smoke rollout result: `0/1`; this is not used as the final success-rate claim.
+
+Execution policy:
+
+- Phase 2 smoke runs are lightweight enough for agent-side background execution.
+- Phase 3-5 full data generation, training, and eval runs should be packaged as one-click serial scripts and executed by the user in the foreground.

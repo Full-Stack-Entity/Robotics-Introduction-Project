@@ -1,6 +1,6 @@
 # 机器人学导论自主设计仿真任务清单
 
-更新时间：2026-05-28
+更新时间：2026-05-29
 
 ## 总目标
 
@@ -10,7 +10,7 @@
 2. 使用 RoboTwin2.0 重新生成数据、重新训练 Diffusion Policy 系模型，并在 3 个任务上完成评估与一次 rollout 展示。
 3. 产出 LaTeX 报告 PDF、PPT、视频讲稿与可复现实验命令。
 
-本计划等待用户确认后开始执行。确认前不进入代码实现、数据生成或训练阶段。
+本计划已进入执行阶段。Phase 3-5 的重资源数据生成、训练和完整评测由脚本化命令串行封装，用户在前台执行。
 
 ## 当前项目状态
 
@@ -166,18 +166,18 @@ report/
 
 ### Phase 2：RoboTwin DP smoke
 
-- [ ] 基于 `grab_roller` 创建小规模 smoke 配置。
-- [ ] 生成 5-10 条 `demo_clean` 数据。
-- [ ] 跑通 DP 数据预处理。
-- [ ] 跑通 DP 训练启动。
-- [ ] 跑通官方 eval 启动。
-- [ ] 跑通自定义单次 rollout 展示脚本的最小版本。
+- [x] 基于 `grab_roller` 创建小规模 smoke 配置：`configs/robotwin/demo_clean_smoke.yml`。
+- [x] 生成 5 条 `demo_clean_smoke` 数据：`../RoboTwin-Project/RoboTwin/data/grab_roller/demo_clean_smoke`。
+- [x] 跑通 DP 数据预处理：`../RoboTwin-Project/RoboTwin/policy/DP/data/grab_roller-demo_clean_smoke-5.zarr`。
+- [x] 跑通 DP 训练启动：debug training 生成 `../RoboTwin-Project/RoboTwin/policy/DP/checkpoints/grab_roller-demo_clean_smoke-5-0/2.ckpt`。
+- [x] 跑通官方 eval 启动：90s timeout 前已写出 `../RoboTwin-Project/RoboTwin/eval_result/grab_roller/DP/demo_clean_smoke/demo_clean_smoke/2026-05-29 10:40:40/episode0.mp4`。
+- [x] 跑通自定义单次 rollout 展示脚本的最小版本：`pixi run robotwin-dp-smoke-rollout`。
 
 验收：
 
-- [ ] `grab_roller` smoke 数据、训练日志、eval 产物存在。
-- [ ] 自定义 rollout 脚本可以调用训练后模型并输出可视化结果。
-- [ ] 明确是否继续 DP 主线，或是否尝试 DP3 smoke。
+- [x] `grab_roller` smoke 数据、训练日志、eval 产物存在：`outputs/robotwin/summary/phase2_dp_smoke_summary.md`。
+- [x] 自定义 rollout 脚本可以调用训练后模型并输出可视化结果：`outputs/robotwin/single_rollouts/grab_roller/demo_clean_smoke_seed0_ckpt2_20260529-104835/viewer.html`。
+- [x] 明确继续 DP 主线；暂不切换 DP3。Phase 3-5 的重资源命令由 agent 撰写一键串行脚本，用户在前台执行。
 
 ### Phase 3：RoboTwin 三任务数据生成
 

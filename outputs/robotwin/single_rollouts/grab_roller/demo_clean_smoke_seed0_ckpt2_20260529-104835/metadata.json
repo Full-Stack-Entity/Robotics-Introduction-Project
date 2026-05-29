@@ -1,0 +1,11 @@
+{
+  "task_name": "grab_roller",
+  "task_config": "demo_clean_smoke",
+  "ckpt_setting": "demo_clean_smoke",
+  "expert_data_num": 5,
+  "seed": 0,
+  "checkpoint_num": 2,
+  "success_count": 0,
+  "video_file": "/home/robotics/桌面/Embodied-AI/Robotics-Introduction-Project/outputs/robotwin/single_rollouts/grab_roller/demo_clean_smoke_seed0_ckpt2_20260529-104835/episode0.mp4",
+  "viewer_file": "/home/robotics/桌面/Embodied-AI/Robotics-Introduction-Project/outputs/robotwin/single_rollouts/grab_roller/demo_clean_smoke_seed0_ckpt2_20260529-104835/viewer.html"
+}

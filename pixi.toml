@@ -22,6 +22,12 @@ sapien-basic-smoke = "python scripts/sapien/run_basic_tasks.py --tasks six_point
 sapien-basic-tasks = "python scripts/sapien/run_basic_tasks.py"
 sapien-basic-live = "python scripts/sapien/run_basic_tasks.py --live-browser --preview-delay 0.033"
 sapien-basic-viewer = "python scripts/sapien/run_basic_tasks.py --sapien-viewer --preview-delay 0.033"
+robotwin-dp-smoke-collect = "python scripts/robotwin/run_dp_smoke.py collect"
+robotwin-dp-smoke-process = "python scripts/robotwin/run_dp_smoke.py process"
+robotwin-dp-smoke-train = "python scripts/robotwin/run_dp_smoke.py train-debug"
+robotwin-dp-smoke-eval-start = "python scripts/robotwin/run_dp_smoke.py eval-start"
+robotwin-dp-smoke-rollout = "python scripts/robotwin/run_dp_smoke.py single-rollout"
+robotwin-dp-smoke-all-light = "python scripts/robotwin/run_dp_smoke.py all-light"
 
 [dependencies]
 python = "3.10.*"
