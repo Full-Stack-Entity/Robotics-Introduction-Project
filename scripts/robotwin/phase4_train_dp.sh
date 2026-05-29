@@ -15,9 +15,9 @@ Environment overrides:
   SEED=0
   GPU_ID=0
   ROBOTWIN_ARTIFACT_ROOT=outputs/robotwin/artifacts
-  TRAIN_EPOCHS=600
-  CHECKPOINT_EVERY=300
-  BATCH_SIZE=16
+  TRAIN_EPOCHS=200
+  CHECKPOINT_EVERY=200
+  BATCH_SIZE=32
   MAX_TRAIN_STEPS=100
   MAX_VAL_STEPS=20
   GRADIENT_ACCUMULATE_EVERY=1
@@ -29,8 +29,8 @@ Environment overrides:
   ROBOTWIN_ROOT=../RoboTwin-Project/RoboTwin
   LOG_ROOT=outputs/robotwin/logs/phase4_<timestamp>
 
-This is a heavy foreground command. Defaults are tuned for a 12GB GPU. If it
-still OOMs, retry with BATCH_SIZE=8.
+This is a heavy foreground command. Defaults balance course runtime and a
+verified 12GB GPU run. If it OOMs, retry with BATCH_SIZE=16, then BATCH_SIZE=8.
 EOF
 }
 
@@ -48,9 +48,9 @@ TASK_CONFIG="${TASK_CONFIG:-demo_clean_100}"
 EXPERT_DATA_NUM="${EXPERT_DATA_NUM:-100}"
 SEED="${SEED:-0}"
 GPU_ID="${GPU_ID:-0}"
-TRAIN_EPOCHS="${TRAIN_EPOCHS:-600}"
-CHECKPOINT_EVERY="${CHECKPOINT_EVERY:-300}"
-BATCH_SIZE="${BATCH_SIZE:-16}"
+TRAIN_EPOCHS="${TRAIN_EPOCHS:-200}"
+CHECKPOINT_EVERY="${CHECKPOINT_EVERY:-200}"
+BATCH_SIZE="${BATCH_SIZE:-32}"
 MAX_TRAIN_STEPS="${MAX_TRAIN_STEPS:-100}"
 MAX_VAL_STEPS="${MAX_VAL_STEPS:-20}"
 GRADIENT_ACCUMULATE_EVERY="${GRADIENT_ACCUMULATE_EVERY:-1}"

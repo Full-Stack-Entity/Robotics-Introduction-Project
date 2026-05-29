@@ -225,9 +225,9 @@ pixi run robotwin-phase3-generate
 
 TASK_CONFIG=demo_clean_100 \
 EXPERT_DATA_NUM=100 \
-TRAIN_EPOCHS=600 \
-CHECKPOINT_EVERY=300 \
-BATCH_SIZE=16 \
+TRAIN_EPOCHS=200 \
+CHECKPOINT_EVERY=200 \
+BATCH_SIZE=32 \
 MAX_TRAIN_STEPS=100 \
 MAX_VAL_STEPS=20 \
 USE_EMA=False \
@@ -236,7 +236,7 @@ pixi run robotwin-phase4-train
 TASK_CONFIG=demo_clean_100 \
 CKPT_SETTING=demo_clean_100 \
 EXPERT_DATA_NUM=100 \
-CHECKPOINT_NUM=600 \
+CHECKPOINT_NUM=200 \
 pixi run robotwin-phase5-eval
 ```
 
@@ -244,7 +244,7 @@ Expected key outputs:
 
 - Data: `outputs/robotwin/artifacts/data/<task>/demo_clean_100/`
 - Zarr: `outputs/robotwin/artifacts/dp_data/<task>-demo_clean_100-100.zarr`
-- Checkpoint: `outputs/robotwin/artifacts/checkpoints/<task>-demo_clean_100-100-0/600.ckpt`
+- Checkpoint: `outputs/robotwin/artifacts/checkpoints/<task>-demo_clean_100-100-0/200.ckpt`
 - Official eval: `outputs/robotwin/artifacts/eval_result/<task>/DP/demo_clean_100/demo_clean_100/<timestamp>/`
 - Custom rollout viewer: `outputs/robotwin/single_rollouts/<task>/.../viewer.html`
 
@@ -289,7 +289,7 @@ Root cause:
 - The image encoder receives `batch_size x n_obs_steps` RGB observations, so `128 x 3` 240x320 images through ResNet is too aggressive for a 12GB GPU.
 - Reducing the number of tasks only reduces total runtime. Reducing `EXPERT_DATA_NUM` reduces steps per epoch and disk/zarr size, but does not directly reduce per-step GPU activation memory when `BATCH_SIZE` remains too large.
 
-Updated Phase 4 default:
+Initial low-memory Phase 4 default:
 
 ```bash
 BATCH_SIZE=16
@@ -312,3 +312,22 @@ If the low-memory default still OOMs, retry:
 ```bash
 BATCH_SIZE=8 pixi run robotwin-phase4-train
 ```
+
+Follow-up default adjustment:
+
+- The user verified `BATCH_SIZE=32` reached epoch 171 on `grab_roller` without OOM.
+- The observed loss was about `0.0166`, and the run was interrupted manually because 600 epochs was longer than needed for the course demonstration.
+- Phase 4 now defaults to a 200-epoch course profile:
+
+```bash
+TRAIN_EPOCHS=200
+CHECKPOINT_EVERY=200
+BATCH_SIZE=32
+MAX_TRAIN_STEPS=100
+MAX_VAL_STEPS=20
+USE_EMA=False
+pixi run robotwin-phase4-train
+```
+
+- Phase 5 now defaults to `CHECKPOINT_NUM=200`, so `pixi run robotwin-phase5-eval` targets the expected final checkpoint without extra overrides.
+- If `BATCH_SIZE=32` OOMs on a later run, retry `BATCH_SIZE=16 pixi run robotwin-phase4-train`; if needed, retry `BATCH_SIZE=8 pixi run robotwin-phase4-train`.

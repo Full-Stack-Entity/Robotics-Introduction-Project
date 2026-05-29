@@ -204,6 +204,7 @@ report/
 - [ ] 记录训练命令、训练时长、显存占用、loss 曲线和 checkpoint 路径。
 - [ ] 如果默认 batch size/epochs 不适合本机，进行保守调参并记录原因。
 - [x] 首次 Phase4 训练因 `BATCH_SIZE=128` 在 12GB GPU 上 OOM；已将默认训练配置改为 low-memory profile 并记录原因。
+- [x] 用户验证 `BATCH_SIZE=32` 可在 `grab_roller` 训练到 epoch 171 且 loss 约 `0.0166`；默认训练轮数改为 `TRAIN_EPOCHS=200`，最终 checkpoint 改为 `200.ckpt`。
 
 验收：
 
@@ -226,6 +227,7 @@ report/
 验收：
 
 - [x] 一条前台命令封装三任务官方评测与展示 rollout：`pixi run robotwin-phase5-eval`。
+- [x] 默认评测 checkpoint 与 Phase4 训练默认值同步为 `CHECKPOINT_NUM=200`。
 - [ ] 官方评测结果存在并可被报告引用。
 - [ ] 自定义单次 rollout 展示脚本可重跑。
 - [ ] 三个任务各有一个展示级视频或在线播放入口。
