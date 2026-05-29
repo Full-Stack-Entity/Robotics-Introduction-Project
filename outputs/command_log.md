@@ -227,7 +227,10 @@ TASK_CONFIG=demo_clean_100 \
 EXPERT_DATA_NUM=100 \
 TRAIN_EPOCHS=600 \
 CHECKPOINT_EVERY=300 \
-BATCH_SIZE=128 \
+BATCH_SIZE=16 \
+MAX_TRAIN_STEPS=100 \
+MAX_VAL_STEPS=20 \
+USE_EMA=False \
 pixi run robotwin-phase4-train
 
 TASK_CONFIG=demo_clean_100 \
@@ -268,3 +271,44 @@ After completion, the generated data was migrated into the course project artifa
 | `place_burger_fries` | `outputs/robotwin/artifacts/data/place_burger_fries/demo_clean_100` | 100 | 100 | 100 | 100 | 1.9G | 3 / 103 tries |
 
 Each task directory also contains `seed.txt` and `scene_info.json`.
+
+## 2026-05-29 Phase 4 OOM Adjustment
+
+The first Phase 4 foreground attempt failed on `grab_roller` during the first training batch:
+
+```text
+torch.OutOfMemoryError: CUDA out of memory
+batch_size: 128
+GPU capacity: 11.60 GiB
+```
+
+Root cause:
+
+- The scripts train tasks serially, so this was not caused by training three tasks at once.
+- The failure happened before completing the first `grab_roller` batch.
+- The image encoder receives `batch_size x n_obs_steps` RGB observations, so `128 x 3` 240x320 images through ResNet is too aggressive for a 12GB GPU.
+- Reducing the number of tasks only reduces total runtime. Reducing `EXPERT_DATA_NUM` reduces steps per epoch and disk/zarr size, but does not directly reduce per-step GPU activation memory when `BATCH_SIZE` remains too large.
+
+Updated Phase 4 default:
+
+```bash
+BATCH_SIZE=16
+MAX_TRAIN_STEPS=100
+MAX_VAL_STEPS=20
+USE_EMA=False
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+```
+
+The failed attempt already created:
+
+```text
+outputs/robotwin/artifacts/dp_data/grab_roller-demo_clean_100-100.zarr
+```
+
+The script now skips an existing zarr by default. Set `REPROCESS_ZARR=1` to regenerate it.
+
+If the low-memory default still OOMs, retry:
+
+```bash
+BATCH_SIZE=8 pixi run robotwin-phase4-train
+```

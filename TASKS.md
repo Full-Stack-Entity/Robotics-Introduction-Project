@@ -203,6 +203,7 @@ report/
 - [ ] 对 `place_burger_fries` 进行 DP 预处理与训练。
 - [ ] 记录训练命令、训练时长、显存占用、loss 曲线和 checkpoint 路径。
 - [ ] 如果默认 batch size/epochs 不适合本机，进行保守调参并记录原因。
+- [x] 首次 Phase4 训练因 `BATCH_SIZE=128` 在 12GB GPU 上 OOM；已将默认训练配置改为 low-memory profile 并记录原因。
 
 验收：
 

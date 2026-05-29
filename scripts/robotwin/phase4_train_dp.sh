@@ -17,13 +17,20 @@ Environment overrides:
   ROBOTWIN_ARTIFACT_ROOT=outputs/robotwin/artifacts
   TRAIN_EPOCHS=600
   CHECKPOINT_EVERY=300
-  BATCH_SIZE=128
+  BATCH_SIZE=16
+  MAX_TRAIN_STEPS=100
+  MAX_VAL_STEPS=20
+  GRADIENT_ACCUMULATE_EVERY=1
+  USE_EMA=False
+  REPROCESS_ZARR=0
   NUM_INFERENCE_STEPS=100
   NOISE_TIMESTEPS=100
+  PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
   ROBOTWIN_ROOT=../RoboTwin-Project/RoboTwin
   LOG_ROOT=outputs/robotwin/logs/phase4_<timestamp>
 
-This is a heavy foreground command. It processes and trains tasks serially.
+This is a heavy foreground command. Defaults are tuned for a 12GB GPU. If it
+still OOMs, retry with BATCH_SIZE=8.
 EOF
 }
 
@@ -43,12 +50,18 @@ SEED="${SEED:-0}"
 GPU_ID="${GPU_ID:-0}"
 TRAIN_EPOCHS="${TRAIN_EPOCHS:-600}"
 CHECKPOINT_EVERY="${CHECKPOINT_EVERY:-300}"
-BATCH_SIZE="${BATCH_SIZE:-128}"
+BATCH_SIZE="${BATCH_SIZE:-16}"
+MAX_TRAIN_STEPS="${MAX_TRAIN_STEPS:-100}"
+MAX_VAL_STEPS="${MAX_VAL_STEPS:-20}"
+GRADIENT_ACCUMULATE_EVERY="${GRADIENT_ACCUMULATE_EVERY:-1}"
+USE_EMA="${USE_EMA:-False}"
+REPROCESS_ZARR="${REPROCESS_ZARR:-0}"
 NUM_INFERENCE_STEPS="${NUM_INFERENCE_STEPS:-100}"
 NOISE_TIMESTEPS="${NOISE_TIMESTEPS:-100}"
+PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_ROOT="${LOG_ROOT:-${PROJECT_ROOT}/outputs/robotwin/logs/phase4_${STAMP}}"
-export ROBOTWIN_ROOT ROBOTWIN_ARTIFACT_ROOT
+export ROBOTWIN_ROOT ROBOTWIN_ARTIFACT_ROOT PYTORCH_CUDA_ALLOC_CONF
 
 require_file() {
   local path="$1"
@@ -106,6 +119,12 @@ python "${PROJECT_ROOT}/scripts/robotwin/prepare_artifact_links.py" \
   echo "train_epochs: ${TRAIN_EPOCHS}"
   echo "checkpoint_every: ${CHECKPOINT_EVERY}"
   echo "batch_size: ${BATCH_SIZE}"
+  echo "max_train_steps: ${MAX_TRAIN_STEPS}"
+  echo "max_val_steps: ${MAX_VAL_STEPS}"
+  echo "gradient_accumulate_every: ${GRADIENT_ACCUMULATE_EVERY}"
+  echo "use_ema: ${USE_EMA}"
+  echo "reprocess_zarr: ${REPROCESS_ZARR}"
+  echo "pytorch_cuda_alloc_conf: ${PYTORCH_CUDA_ALLOC_CONF}"
   echo "tasks: ${TASKS}"
 } | tee "${LOG_ROOT}/run_env.txt"
 
@@ -121,12 +140,15 @@ for task_name in "${TASK_LIST[@]}"; do
   fi
 
   process_log="${LOG_ROOT}/${task_name}_process.log"
-  (
-    cd "${ROBOTWIN_ROOT}/policy/DP"
-    python process_data.py "${task_name}" "${TASK_CONFIG}" "${EXPERT_DATA_NUM}"
-  ) 2>&1 | tee "${process_log}"
-
   zarr_dir="${ROBOTWIN_ARTIFACT_ROOT}/dp_data/${task_name}-${TASK_CONFIG}-${EXPERT_DATA_NUM}.zarr"
+  if [[ "${REPROCESS_ZARR}" == "0" && -f "${zarr_dir}/.zgroup" ]]; then
+    echo "[skip] ${task_name}: existing zarr ${zarr_dir}" | tee "${process_log}"
+  else
+    (
+      cd "${ROBOTWIN_ROOT}/policy/DP"
+      python process_data.py "${task_name}" "${TASK_CONFIG}" "${EXPERT_DATA_NUM}"
+    ) 2>&1 | tee "${process_log}"
+  fi
   require_file "${zarr_dir}/.zgroup"
 
   echo
@@ -145,6 +167,10 @@ for task_name in "${TASK_LIST[@]}"; do
         "training.device=cuda:0" \
         "training.num_epochs=${TRAIN_EPOCHS}" \
         "training.checkpoint_every=${CHECKPOINT_EVERY}" \
+        "training.max_train_steps=${MAX_TRAIN_STEPS}" \
+        "training.max_val_steps=${MAX_VAL_STEPS}" \
+        "training.gradient_accumulate_every=${GRADIENT_ACCUMULATE_EVERY}" \
+        "training.use_ema=${USE_EMA}" \
         "dataloader.batch_size=${BATCH_SIZE}" \
         "val_dataloader.batch_size=${BATCH_SIZE}" \
         "policy.num_inference_steps=${NUM_INFERENCE_STEPS}" \
