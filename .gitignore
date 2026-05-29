@@ -27,6 +27,8 @@ outputs/**/*.pt
 outputs/**/*.pth
 outputs/**/checkpoint*/
 outputs/**/checkpoints/
+outputs/sapien_smoke/
+outputs/sapien_live_smoke/
 
 # RoboTwin and training data are stored outside this course repo.
 RoboTwin/

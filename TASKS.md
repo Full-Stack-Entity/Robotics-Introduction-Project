@@ -150,19 +150,19 @@ report/
 
 ### Phase 1：SAPIEN 基础仿真任务
 
-- [ ] 选择机械臂模型与场景配置。
-- [ ] 实现六点点位控制。
-- [ ] 实现 8 字形末端轨迹。
-- [ ] 实现椭圆末端轨迹。
-- [ ] 保存每个任务的轨迹数据、关键帧、最终视频。
-- [ ] 优先尝试交互/在线播放预览。
-- [ ] 如果交互预览不稳定，则实现 mp4 导出作为兜底。
+- [x] 选择机械臂模型与场景配置：RoboTwin Franka Panda URDF + MPlib IK + SAPIEN 第三人称渲染。
+- [x] 实现六点点位控制：`six_points`。
+- [x] 实现 8 字形末端轨迹：`figure_eight`。
+- [x] 实现椭圆末端轨迹：`ellipse`。
+- [x] 保存每个任务的轨迹数据、关键帧和最终视频：`outputs/sapien/summary.md`。
+- [x] 优先尝试交互/在线播放预览：`pixi run sapien-basic-live` 启动浏览器 MJPEG 实时预览；离线中文回放页为 `outputs/sapien/viewer.html`。
+- [x] 如果交互预览不稳定，则实现 mp4 导出作为兜底：`outputs/sapien/videos/*.mp4`。
 
 验收：
 
-- [ ] 一条命令可重跑 SAPIEN 基础任务。
-- [ ] 三类必选控制都有可视化产物。
-- [ ] 报告中可写出轨迹规划、控制过程和伪代码。
+- [x] 一条命令可重跑 SAPIEN 基础任务：`pixi run sapien-basic-tasks`。
+- [x] 三类必选控制都有可视化产物。
+- [x] 报告中可写出轨迹规划、控制过程和伪代码。
 
 ### Phase 2：RoboTwin DP smoke
 

@@ -18,6 +18,10 @@ ffmpeg-video-smoke = "python scripts/env/test_ffmpeg_video_backend.py"
 patch-robotwin-vendor = "python ../RoboTwin-Project/scripts/patch_robotwin_vendor.py"
 install-curobo = "bash -lc 'cd ../RoboTwin-Project && bash scripts/install_curobo.sh'"
 write-env-report = "python scripts/env/write_environment_report.py"
+sapien-basic-smoke = "python scripts/sapien/run_basic_tasks.py --tasks six_points --steps-per-segment 4 --width 320 --height 240 --fps 12 --no-keyframes --output-root outputs/sapien_smoke"
+sapien-basic-tasks = "python scripts/sapien/run_basic_tasks.py"
+sapien-basic-live = "python scripts/sapien/run_basic_tasks.py --live-browser --preview-delay 0.033"
+sapien-basic-viewer = "python scripts/sapien/run_basic_tasks.py --sapien-viewer --preview-delay 0.033"
 
 [dependencies]
 python = "3.10.*"

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SAPIEN 基础任务回放</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; background: #f7f8fa; color: #1c2430; }
+    main { max-width: 980px; margin: 0 auto; }
+    section { margin: 0 0 28px; padding-bottom: 20px; border-bottom: 1px solid #d8dde6; }
+    video { width: 100%; max-height: 560px; background: #111; border-radius: 6px; }
+    h1, h2 { margin-bottom: 10px; }
+    p { color: #4d5968; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>SAPIEN 基础任务回放：Franka Panda 机械臂</h1>
+    <p>本页播放已生成的视频；实时预览请运行 <code>pixi run sapien-basic-live</code>。</p>
+    
+      <section>
+        <h2>六点空间点位控制</h2>
+        <video src="videos/six_points.mp4" controls muted loop></video>
+        <p><a href="plots/six_points_trajectory.png">查看轨迹图</a> · 最大末端误差 0.00001033 m</p>
+      </section>
+      <section>
+        <h2>8 字形末端轨迹</h2>
+        <video src="videos/figure_eight.mp4" controls muted loop></video>
+        <p><a href="plots/figure_eight_trajectory.png">查看轨迹图</a> · 最大末端误差 0.00001016 m</p>
+      </section>
+      <section>
+        <h2>椭圆末端轨迹</h2>
+        <video src="videos/ellipse.mp4" controls muted loop></video>
+        <p><a href="plots/ellipse_trajectory.png">查看轨迹图</a> · 最大末端误差 0.00001016 m</p>
+      </section>
+  </main>
+</body>
+</html>
