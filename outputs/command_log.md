@@ -225,18 +225,18 @@ pixi run robotwin-phase3-generate
 
 TASK_CONFIG=demo_clean_100 \
 EXPERT_DATA_NUM=100 \
-TRAIN_EPOCHS=200 \
-CHECKPOINT_EVERY=200 \
-BATCH_SIZE=32 \
-MAX_TRAIN_STEPS=100 \
-MAX_VAL_STEPS=20 \
-USE_EMA=False \
+TRAIN_EPOCHS=100 \
+CHECKPOINT_EVERY=100 \
+BATCH_SIZE=16 \
+MAX_TRAIN_STEPS=null \
+MAX_VAL_STEPS=null \
+USE_EMA=True \
 pixi run robotwin-phase4-train
 
 TASK_CONFIG=demo_clean_100 \
 CKPT_SETTING=demo_clean_100 \
 EXPERT_DATA_NUM=100 \
-CHECKPOINT_NUM=200 \
+CHECKPOINT_NUM=100 \
 pixi run robotwin-phase5-eval
 ```
 
@@ -244,7 +244,7 @@ Expected key outputs:
 
 - Data: `outputs/robotwin/artifacts/data/<task>/demo_clean_100/`
 - Zarr: `outputs/robotwin/artifacts/dp_data/<task>-demo_clean_100-100.zarr`
-- Checkpoint: `outputs/robotwin/artifacts/checkpoints/<task>-demo_clean_100-100-0/200.ckpt`
+- Checkpoint: `outputs/robotwin/artifacts/checkpoints/<task>-demo_clean_100-100-0/100.ckpt`
 - Official eval: `outputs/robotwin/artifacts/eval_result/<task>/DP/demo_clean_100/demo_clean_100/<timestamp>/`
 - Custom rollout viewer: `outputs/robotwin/single_rollouts/<task>/.../viewer.html`
 
@@ -329,7 +329,7 @@ USE_EMA=False
 pixi run robotwin-phase4-train
 ```
 
-- Phase 5 now defaults to `CHECKPOINT_NUM=200`, so `pixi run robotwin-phase5-eval` targets the expected final checkpoint without extra overrides.
+- At this point Phase 5 was temporarily aligned to `CHECKPOINT_NUM=200`; this was later superseded by the final quality profile and `CHECKPOINT_NUM=100`.
 - If `BATCH_SIZE=32` OOMs on a later run, retry `BATCH_SIZE=16 pixi run robotwin-phase4-train`; if needed, retry `BATCH_SIZE=8 pixi run robotwin-phase4-train`.
 
 ## 2026-05-29 Phase 4 Training Result
@@ -372,4 +372,68 @@ Phase 4 is complete. The next foreground command is:
 
 ```bash
 pixi run robotwin-phase5-eval
+```
+
+## 2026-05-30 Phase 4 Quality Retraining Result
+
+The final Phase 4 course profile uses the full dataloader and EMA:
+
+```bash
+TRAIN_EPOCHS=100 \
+CHECKPOINT_EVERY=100 \
+BATCH_SIZE=16 \
+MAX_TRAIN_STEPS=null \
+MAX_VAL_STEPS=null \
+USE_EMA=True \
+pixi run robotwin-phase4-train
+```
+
+Log directory:
+
+```text
+outputs/robotwin/logs/phase4_20260529-224707
+```
+
+Completed final checkpoints:
+
+```text
+outputs/robotwin/artifacts/checkpoints/grab_roller-demo_clean_100-100-0/100.ckpt
+outputs/robotwin/artifacts/checkpoints/adjust_bottle-demo_clean_100-100-0/100.ckpt
+outputs/robotwin/artifacts/checkpoints/place_burger_fries-demo_clean_100-100-0/100.ckpt
+```
+
+## 2026-05-30 Phase 5 Evaluation Result
+
+User foreground command completed:
+
+```bash
+CHECKPOINT_NUM=100 pixi run robotwin-phase5-eval
+```
+
+Log directory:
+
+```text
+outputs/robotwin/logs/phase5_20260530-092044
+```
+
+Official eval results:
+
+| Task | Success rate | Result file |
+| --- | ---: | --- |
+| `grab_roller` | 100% | `outputs/robotwin/artifacts/eval_result/grab_roller/DP/demo_clean_100/demo_clean_100/2026-05-30 09:20:46/_result.txt` |
+| `adjust_bottle` | 71% | `outputs/robotwin/artifacts/eval_result/adjust_bottle/DP/demo_clean_100/demo_clean_100/2026-05-30 09:49:09/_result.txt` |
+| `place_burger_fries` | 98% | `outputs/robotwin/artifacts/eval_result/place_burger_fries/DP/demo_clean_100/demo_clean_100/2026-05-30 10:58:14/_result.txt` |
+
+Custom rollout viewers:
+
+```text
+outputs/robotwin/single_rollouts/grab_roller/demo_clean_100_seed0_ckpt100_20260530-094826/viewer.html
+outputs/robotwin/single_rollouts/adjust_bottle/demo_clean_100_seed0_ckpt100_20260530-105724/viewer.html
+outputs/robotwin/single_rollouts/place_burger_fries/demo_clean_100_seed0_ckpt100_20260530-121045/viewer.html
+```
+
+Summary:
+
+```text
+outputs/robotwin/summary/phase5_eval_summary.md
 ```

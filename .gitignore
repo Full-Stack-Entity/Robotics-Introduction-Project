@@ -29,6 +29,7 @@ outputs/**/checkpoint*/
 outputs/**/checkpoints/
 outputs/robotwin/artifacts/
 outputs/robotwin/logs/
+outputs/robotwin/single_rollouts/
 outputs/sapien_smoke/
 outputs/sapien_live_smoke/
 

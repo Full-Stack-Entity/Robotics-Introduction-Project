@@ -1,6 +1,6 @@
 # 机器人学导论自主设计仿真任务清单
 
-更新时间：2026-05-29
+更新时间：2026-05-30
 
 ## 总目标
 
@@ -202,10 +202,11 @@ report/
 - [x] 对 `adjust_bottle` 进行 DP 预处理与训练。
 - [x] 对 `place_burger_fries` 进行 DP 预处理与训练。
 - [x] 记录训练命令、训练时长、loss 曲线和 checkpoint 路径：`outputs/robotwin/summary/phase4_training_summary.md`。
-- [ ] 如报告需要精确显存峰值，后续需要额外用 `nvidia-smi` 采样；当前 Phase4 只证明 `BATCH_SIZE=32` 可在 12GB GPU 上完成训练。
+- [ ] 如报告需要精确显存峰值，后续需要额外用 `nvidia-smi` 采样；当前 Phase4 只证明最终 `BATCH_SIZE=16` 完整 dataloader + EMA 训练可在 12GB GPU 上完成。
 - [x] 如果默认 batch size/epochs 不适合本机，进行保守调参并记录原因。
 - [x] 首次 Phase4 训练因 `BATCH_SIZE=128` 在 12GB GPU 上 OOM；已将默认训练配置改为 low-memory profile 并记录原因。
 - [x] 用户验证 `BATCH_SIZE=32` 可在 `grab_roller` 训练到 epoch 171 且 loss 约 `0.0166`；默认训练轮数改为 `TRAIN_EPOCHS=200`，最终 checkpoint 改为 `200.ckpt`。
+- [x] 重新使用完整 dataloader + EMA 训练三任务：`TRAIN_EPOCHS=100`、`CHECKPOINT_EVERY=100`、`BATCH_SIZE=16`、`MAX_TRAIN_STEPS=null`、`MAX_VAL_STEPS=null`、`USE_EMA=True`，并生成最终 `100.ckpt`。
 
 验收：
 
@@ -217,22 +218,22 @@ report/
 ### Phase 5：官方评测与自定义单次 rollout
 
 - [x] 生成 Phase 5 串行前台执行脚本：`scripts/robotwin/phase5_eval_rollout.sh`。
-- [ ] 使用官方 DP eval 脚本评估 `grab_roller`。
-- [ ] 使用官方 DP eval 脚本评估 `adjust_bottle`。
-- [ ] 使用官方 DP eval 脚本评估 `place_burger_fries`。
-- [ ] 汇总成功率、rollout 数量、失败案例和视频路径。
-- [ ] 编写 `single_rollout_demo.py`，对三个任务各执行一次训练后模型 rollout。
-- [ ] 单次 rollout 脚本优先提供在线播放/交互预览入口。
-- [ ] 如果在线播放不可行，则自动保存每个任务的 mp4。
+- [x] 使用官方 DP eval 脚本评估 `grab_roller`。
+- [x] 使用官方 DP eval 脚本评估 `adjust_bottle`。
+- [x] 使用官方 DP eval 脚本评估 `place_burger_fries`。
+- [x] 汇总成功率、rollout 数量、失败案例和视频路径：`outputs/robotwin/summary/phase5_eval_summary.md`。
+- [x] 编写 `single_rollout_demo.py`，对三个任务各执行一次训练后模型 rollout。
+- [x] 单次 rollout 脚本优先提供在线播放/交互预览入口。
+- [x] 如果在线播放不可行，则自动保存每个任务的 mp4。
 
 验收：
 
 - [x] 一条前台命令封装三任务官方评测与展示 rollout：`pixi run robotwin-phase5-eval`。
-- [x] 默认评测 checkpoint 与 Phase4 训练默认值同步为 `CHECKPOINT_NUM=200`。
-- [ ] 官方评测结果存在并可被报告引用。
-- [ ] 自定义单次 rollout 展示脚本可重跑。
-- [ ] 三个任务各有一个展示级视频或在线播放入口。
-- [ ] 官方评测与自定义展示在报告中明确区分。
+- [x] 默认评测 checkpoint 与最终 Phase4 训练默认值同步为 `CHECKPOINT_NUM=100`。
+- [x] 官方评测结果存在并可被报告引用。
+- [x] 自定义单次 rollout 展示脚本可重跑。
+- [x] 三个任务各有一个展示级视频或在线播放入口。
+- [x] 官方评测与自定义展示在报告中明确区分。
 
 ### Phase 6：可视化与结果整理
 

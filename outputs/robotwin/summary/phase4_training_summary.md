@@ -1,66 +1,60 @@
 # Phase 4 DP Training Summary
 
-Date: 2026-05-29
+Date: 2026-05-30
 
 ## Run
 
-- Command: `pixi run robotwin-phase4-train`
-- Log root: `outputs/robotwin/logs/phase4_20260529-144921`
+- Command: `TRAIN_EPOCHS=100 CHECKPOINT_EVERY=100 BATCH_SIZE=16 MAX_TRAIN_STEPS=null MAX_VAL_STEPS=null USE_EMA=True pixi run robotwin-phase4-train`
+- Log root: `outputs/robotwin/logs/phase4_20260529-224707`
 - Task config: `demo_clean_100`
 - Expert episodes per task: `100`
 - Seed: `0`
 - GPU id: `0`
-- Training profile: `TRAIN_EPOCHS=200`, `CHECKPOINT_EVERY=200`, `BATCH_SIZE=32`
-- Bounded training: `MAX_TRAIN_STEPS=100`, `MAX_VAL_STEPS=20`, `USE_EMA=False`
+- Training profile: `TRAIN_EPOCHS=100`, `CHECKPOINT_EVERY=100`, `BATCH_SIZE=16`
+- Full-dataloader settings: `MAX_TRAIN_STEPS=null`, `MAX_VAL_STEPS=null`
+- Policy smoothing: `USE_EMA=True`
 - Artifact root: `outputs/robotwin/artifacts`
 
-The run started at `2026-05-29 14:49:21 +0800` and the final training log was
-updated at `2026-05-29 18:12:32 +0800`, for about 3.4 hours of wall-clock time.
+This final quality run started at `2026-05-29 22:47:07 +0800` and the final
+training log was updated at `2026-05-30 09:14:17 +0800`, for about 10.45 hours
+of wall-clock time.
 
 ## Artifact Completeness
 
-| Task | DP zarr | Zarr size | Checkpoint | Checkpoint size | Train log | Process status |
+| Task | DP zarr | Zarr size | Final checkpoint | Checkpoint size | Train log | Process status |
 | --- | --- | ---: | --- | ---: | --- | --- |
-| `grab_roller` | `outputs/robotwin/artifacts/dp_data/grab_roller-demo_clean_100-100.zarr` | 879M | `outputs/robotwin/artifacts/checkpoints/grab_roller-demo_clean_100-100-0/200.ckpt` | 1.16GB | `outputs/robotwin/logs/phase4_20260529-144921/grab_roller_train.log` | existing zarr reused |
-| `adjust_bottle` | `outputs/robotwin/artifacts/dp_data/adjust_bottle-demo_clean_100-100.zarr` | 1.2G | `outputs/robotwin/artifacts/checkpoints/adjust_bottle-demo_clean_100-100-0/200.ckpt` | 1.16GB | `outputs/robotwin/logs/phase4_20260529-144921/adjust_bottle_train.log` | processed 100/100 episodes |
-| `place_burger_fries` | `outputs/robotwin/artifacts/dp_data/place_burger_fries-demo_clean_100-100.zarr` | 2.4G | `outputs/robotwin/artifacts/checkpoints/place_burger_fries-demo_clean_100-100-0/200.ckpt` | 1.16GB | `outputs/robotwin/logs/phase4_20260529-144921/place_burger_fries_train.log` | processed 100/100 episodes |
+| `grab_roller` | `outputs/robotwin/artifacts/dp_data/grab_roller-demo_clean_100-100.zarr` | 879M | `outputs/robotwin/artifacts/checkpoints/grab_roller-demo_clean_100-100-0/100.ckpt` | 1.5GB | `outputs/robotwin/logs/phase4_20260529-224707/grab_roller_train.log` | existing zarr reused |
+| `adjust_bottle` | `outputs/robotwin/artifacts/dp_data/adjust_bottle-demo_clean_100-100.zarr` | 1.2G | `outputs/robotwin/artifacts/checkpoints/adjust_bottle-demo_clean_100-100-0/100.ckpt` | 1.5GB | `outputs/robotwin/logs/phase4_20260529-224707/adjust_bottle_train.log` | existing zarr reused |
+| `place_burger_fries` | `outputs/robotwin/artifacts/dp_data/place_burger_fries-demo_clean_100-100.zarr` | 2.4G | `outputs/robotwin/artifacts/checkpoints/place_burger_fries-demo_clean_100-100-0/100.ckpt` | 1.5GB | `outputs/robotwin/logs/phase4_20260529-224707/place_burger_fries_train.log` | existing zarr reused |
 
-All three tasks reached `Training epoch 199` and `Validation epoch 199`, which
-corresponds to the configured 200 epochs.
+All three tasks reached the configured 100 epochs and saved `100.ckpt`.
 
 ## Training Loss Evidence
 
 The structured DP logs under `outputs/robotwin/artifacts/dp_data/outputs/`
-show the following final epoch-199 records:
+show the following final epoch-99 records:
 
-| Task | Initial train loss | Final train loss | Final val loss | Notes |
+| Task | Final global step | Final train loss | Final val loss | Notes |
 | --- | ---: | ---: | ---: | --- |
-| `grab_roller` | 1.13498 | 0.00899 | 0.00857 | Structured log includes lines from the earlier interrupted run because the Hydra output directory was reused; the final record and checkpoint are from the completed 200-epoch run. |
-| `adjust_bottle` | 1.13898 | 0.01005 | 0.01016 | Clean 200-epoch structured log. |
-| `place_burger_fries` | 1.12718 | 0.01116 | 0.00976 | Clean 200-epoch structured log. |
+| `grab_roller` | 58199 | 0.00204 | 0.00861 | Complete full-dataloader run with EMA. |
+| `adjust_bottle` | 87299 | 0.00135 | 0.00212 | Complete full-dataloader run with EMA. |
+| `place_burger_fries` | 149199 | 0.00110 | 0.00138 | Complete full-dataloader run with EMA. |
 
-The loss curves indicate that optimization converged to a low reconstruction /
-diffusion training loss for all three tasks. This is sufficient evidence that
-Phase 4 training completed and produced usable checkpoints.
+Compared with the earlier capped run, this profile removes the per-epoch
+`MAX_TRAIN_STEPS=100` limit, uses the complete dataloader, and enables EMA.
+It produced the final checkpoints used by Phase 5.
 
 ## Limitations
 
-- Training loss is not a success-rate metric. It only proves that the imitation
-  objective optimized normally.
-- Final task performance must be determined by Phase 5 official RoboTwin eval.
-- The script did not sample peak VRAM usage. The safe claim is that the
-  200-epoch profile with `BATCH_SIZE=32` completed on the available 12GB GPU.
-- The custom single-rollout videos in Phase 5 should be used for PPT/video
-  demonstration, while official eval success rates should be used for the
-  quantitative report.
+- Training loss is not a success-rate metric. Official task success is reported
+  in `outputs/robotwin/summary/phase5_eval_summary.md`.
+- The script did not sample peak VRAM usage. The safe claim is that the final
+  `BATCH_SIZE=16` full-dataloader EMA profile completed on the available 12GB GPU.
 
 ## Decision
 
-Phase 4 is complete. The project is ready to enter Phase 5 with:
+Phase 4 is complete with final checkpoints at `100.ckpt`. Phase 5 should use:
 
 ```bash
-pixi run robotwin-phase5-eval
+CHECKPOINT_NUM=100 pixi run robotwin-phase5-eval
 ```
-
-The Phase 5 script now defaults to `CHECKPOINT_NUM=200`, matching the Phase 4
-checkpoints produced here.

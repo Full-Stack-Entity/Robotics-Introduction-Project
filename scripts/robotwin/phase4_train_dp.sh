@@ -15,13 +15,13 @@ Environment overrides:
   SEED=0
   GPU_ID=0
   ROBOTWIN_ARTIFACT_ROOT=outputs/robotwin/artifacts
-  TRAIN_EPOCHS=200
-  CHECKPOINT_EVERY=200
-  BATCH_SIZE=32
-  MAX_TRAIN_STEPS=100
-  MAX_VAL_STEPS=20
+  TRAIN_EPOCHS=100
+  CHECKPOINT_EVERY=100
+  BATCH_SIZE=16
+  MAX_TRAIN_STEPS=null
+  MAX_VAL_STEPS=null
   GRADIENT_ACCUMULATE_EVERY=1
-  USE_EMA=False
+  USE_EMA=True
   REPROCESS_ZARR=0
   NUM_INFERENCE_STEPS=100
   NOISE_TIMESTEPS=100
@@ -29,8 +29,10 @@ Environment overrides:
   ROBOTWIN_ROOT=../RoboTwin-Project/RoboTwin
   LOG_ROOT=outputs/robotwin/logs/phase4_<timestamp>
 
-This is a heavy foreground command. Defaults balance course runtime and a
-verified 12GB GPU run. If it OOMs, retry with BATCH_SIZE=16, then BATCH_SIZE=8.
+This is a heavy foreground command. Defaults reproduce the final high-success
+course run: full dataloader, EMA policy, 100 epochs, and checkpoint 100. If it
+OOMs, retry with BATCH_SIZE=8. For quick debugging only, override
+MAX_TRAIN_STEPS=100 MAX_VAL_STEPS=20 USE_EMA=False.
 EOF
 }
 
@@ -48,13 +50,13 @@ TASK_CONFIG="${TASK_CONFIG:-demo_clean_100}"
 EXPERT_DATA_NUM="${EXPERT_DATA_NUM:-100}"
 SEED="${SEED:-0}"
 GPU_ID="${GPU_ID:-0}"
-TRAIN_EPOCHS="${TRAIN_EPOCHS:-200}"
-CHECKPOINT_EVERY="${CHECKPOINT_EVERY:-200}"
-BATCH_SIZE="${BATCH_SIZE:-32}"
-MAX_TRAIN_STEPS="${MAX_TRAIN_STEPS:-100}"
-MAX_VAL_STEPS="${MAX_VAL_STEPS:-20}"
+TRAIN_EPOCHS="${TRAIN_EPOCHS:-100}"
+CHECKPOINT_EVERY="${CHECKPOINT_EVERY:-100}"
+BATCH_SIZE="${BATCH_SIZE:-16}"
+MAX_TRAIN_STEPS="${MAX_TRAIN_STEPS:-null}"
+MAX_VAL_STEPS="${MAX_VAL_STEPS:-null}"
 GRADIENT_ACCUMULATE_EVERY="${GRADIENT_ACCUMULATE_EVERY:-1}"
-USE_EMA="${USE_EMA:-False}"
+USE_EMA="${USE_EMA:-True}"
 REPROCESS_ZARR="${REPROCESS_ZARR:-0}"
 NUM_INFERENCE_STEPS="${NUM_INFERENCE_STEPS:-100}"
 NOISE_TIMESTEPS="${NOISE_TIMESTEPS:-100}"
