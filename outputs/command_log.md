@@ -437,3 +437,42 @@ Summary:
 ```text
 outputs/robotwin/summary/phase5_eval_summary.md
 ```
+
+## 2026-05-30 Phase 6 Visual and Result Packaging
+
+Phase 6 is a lightweight organization step. It does not rerun SAPIEN, RoboTwin
+data generation, DP training, or official eval. It records the final artifact
+paths for report/PPT/video use and generates a small training-loss visualization
+from the existing DP logs.
+
+Generated Phase 6 index:
+
+```text
+outputs/phase6_visual_index.md
+```
+
+Final result table:
+
+```text
+outputs/robotwin/summary/final_success_rates.md
+outputs/robotwin/summary/final_success_rates.csv
+```
+
+Training-loss artifacts generated from existing `logs.json.txt` files:
+
+```text
+outputs/robotwin/summary/training_loss_curves.png
+outputs/robotwin/summary/training_loss_epoch_summary.csv
+```
+
+Presentation video segment plan:
+
+```text
+outputs/video_segment_plan.md
+```
+
+Important reporting boundary:
+
+- Official eval success rates are the quantitative results.
+- Custom single-rollout videos are presentation artifacts.
+- Training loss is optimization evidence, not task success.

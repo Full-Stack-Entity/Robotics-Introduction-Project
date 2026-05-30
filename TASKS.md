@@ -237,17 +237,17 @@ report/
 
 ### Phase 6：可视化与结果整理
 
-- [ ] 整理 SAPIEN 必选任务视频与关键帧。
-- [ ] 整理 RoboTwin expert demonstration、official eval、single rollout 三类视频。
-- [ ] 生成训练曲线、成功率表、任务对比表。
-- [ ] 选择视频中要播放的片段。
-- [ ] 标注每个视频片段对应的讲解点。
+- [x] 整理 SAPIEN 必选任务视频与关键帧：`outputs/phase6_visual_index.md`。
+- [x] 整理 RoboTwin expert demonstration、official eval、single rollout 三类视频：`outputs/phase6_visual_index.md`。
+- [x] 生成训练曲线、成功率表、任务对比表：`outputs/robotwin/summary/training_loss_curves.png`、`outputs/robotwin/summary/final_success_rates.md`。
+- [x] 选择视频中要播放的片段：`outputs/video_segment_plan.md`。
+- [x] 标注每个视频片段对应的讲解点：`outputs/video_segment_plan.md`。
 
 验收：
 
-- [ ] `outputs/` 下有清晰的视频、图片、表格目录。
-- [ ] PPT 和报告可以直接引用这些产物。
-- [ ] 视频讲稿知道每一段展示什么、讲什么。
+- [x] `outputs/` 下有清晰的视频、图片、表格目录索引：`outputs/phase6_visual_index.md`。
+- [x] PPT 和报告可以直接引用这些产物：`outputs/robotwin/summary/final_success_rates.md`、`outputs/robotwin/summary/training_loss_curves.png`。
+- [x] 视频讲稿知道每一段展示什么、讲什么：`outputs/video_segment_plan.md`。
 
 ### Phase 7：LaTeX 报告
 

@@ -1,0 +1,4 @@
+task,final_successes,final_trials,final_success_rate_percent,earlier_result,absolute_change_pp,evidence_path
+grab_roller,100,100,100,90%,10,outputs/robotwin/artifacts/eval_result/grab_roller/DP/demo_clean_100/demo_clean_100/2026-05-30 09:20:46/_result.txt
+adjust_bottle,71,100,71,49%,22,outputs/robotwin/artifacts/eval_result/adjust_bottle/DP/demo_clean_100/demo_clean_100/2026-05-30 09:49:09/_result.txt
+place_burger_fries,98,100,98,"incomplete; 0 successes before interruption",,outputs/robotwin/artifacts/eval_result/place_burger_fries/DP/demo_clean_100/demo_clean_100/2026-05-30 10:58:14/_result.txt
