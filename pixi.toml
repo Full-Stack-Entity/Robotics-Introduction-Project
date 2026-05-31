@@ -31,6 +31,9 @@ robotwin-dp-smoke-all-light = "python scripts/robotwin/run_dp_smoke.py all-light
 robotwin-phase3-generate = "bash scripts/robotwin/phase3_generate_data.sh"
 robotwin-phase4-train = "bash scripts/robotwin/phase4_train_dp.sh"
 robotwin-phase5-eval = "bash scripts/robotwin/phase5_eval_rollout.sh"
+robotwin-phase5-single-rollout = "bash scripts/robotwin/phase5_single_rollout_showcase.sh"
+robotwin-phase5-single-rollout-web = "WEB_SERVER=1 OPEN_BROWSER=1 bash scripts/robotwin/phase5_single_rollout_showcase.sh"
+robotwin-phase5-single-rollout-native = "SAPIEN_VIEWER=1 RENDER_FREQ=1 bash scripts/robotwin/phase5_single_rollout_showcase.sh"
 
 [dependencies]
 python = "3.10.*"

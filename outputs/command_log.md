@@ -438,6 +438,40 @@ Summary:
 outputs/robotwin/summary/phase5_eval_summary.md
 ```
 
+Standalone single-rollout showcase, without official 100-trial eval:
+
+```bash
+pixi run robotwin-phase5-single-rollout
+```
+
+Browser-served showcase:
+
+```bash
+WEB_SERVER=1 OPEN_BROWSER=1 pixi run robotwin-phase5-single-rollout
+# or:
+pixi run robotwin-phase5-single-rollout-web
+```
+
+Native SAPIEN viewer showcase:
+
+```bash
+SAPIEN_VIEWER=1 RENDER_FREQ=1 pixi run robotwin-phase5-single-rollout
+# or:
+pixi run robotwin-phase5-single-rollout-native
+```
+
+Native mode generates a temporary task config with `render_freq` enabled under
+`outputs/robotwin/artifacts/generated_configs/` and copies it to RoboTwin's
+runtime `task_config/` directory for the run.
+
+This standalone script loads the three final DP checkpoints and runs exactly one
+rollout per task. It writes `index.html`, `manifest.json`, per-task
+`viewer.html`, `_result.txt`, and `episode0.mp4` under:
+
+```text
+outputs/robotwin/single_rollouts/showcase_<timestamp>/
+```
+
 ## 2026-05-30 Phase 6 Visual and Result Packaging
 
 Phase 6 is a lightweight organization step. It does not rerun SAPIEN, RoboTwin

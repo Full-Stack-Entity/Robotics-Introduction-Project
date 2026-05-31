@@ -223,6 +223,7 @@ report/
 - [x] 使用官方 DP eval 脚本评估 `place_burger_fries`。
 - [x] 汇总成功率、rollout 数量、失败案例和视频路径：`outputs/robotwin/summary/phase5_eval_summary.md`。
 - [x] 编写 `single_rollout_demo.py`，对三个任务各执行一次训练后模型 rollout。
+- [x] 编写独立三任务单次 rollout 展示脚本，不混入官方 100 次 eval：`scripts/robotwin/phase5_single_rollout_showcase.sh`。
 - [x] 单次 rollout 脚本优先提供在线播放/交互预览入口。
 - [x] 如果在线播放不可行，则自动保存每个任务的 mp4。
 
@@ -232,6 +233,7 @@ report/
 - [x] 默认评测 checkpoint 与最终 Phase4 训练默认值同步为 `CHECKPOINT_NUM=100`。
 - [x] 官方评测结果存在并可被报告引用。
 - [x] 自定义单次 rollout 展示脚本可重跑。
+- [x] 单次 rollout 展示有独立命令：`pixi run robotwin-phase5-single-rollout`，并可用 `robotwin-phase5-single-rollout-web` 或 `robotwin-phase5-single-rollout-native` 展示。
 - [x] 三个任务各有一个展示级视频或在线播放入口。
 - [x] 官方评测与自定义展示在报告中明确区分。
 
