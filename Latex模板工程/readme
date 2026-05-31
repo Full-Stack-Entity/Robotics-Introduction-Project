@@ -1,5 +1,0 @@
-在Ubuntu上安装编译环境的指令:sudo apt install texlive-full
-上述命令需要下载较多内容
-
-编译需要运行的命令如下，其中jobname和文件名称可以自定义
-latexmk -xelatex -interaction=nonstopmode -synctex=1 -jobname=Latex模板工程 -outdir=info main.tex  && mv info/Latex模板工程.pdf ./Latex模板工程.pdf
